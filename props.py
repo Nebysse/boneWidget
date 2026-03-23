@@ -43,6 +43,37 @@ class CustomColorSet(bpy.types.PropertyGroup):
     )
 
 
+# CloudRig Spine: Cartoon 形状参数枚举
+CLOUDRIG_SPINE_TOON_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('SHAPE_IK', "IK Shape", "Update spine_toon.shape_ik"),
+    ('SHAPE_IK_SECONDARY', "IK Secondary", "Update spine_toon.shape_ik_secondary"),
+    ('SHAPE_TORSO', "Torso", "Update spine_toon.shape_torso"),
+    ('SHAPE_FK', "FK Shape", "Update fk_chain.shape_fk"),
+    ('SHAPE_FK_ROOT', "FK Root Shape", "Update fk_chain.shape_fk_root"),
+]
+
+# CloudRig Limb: Biped Leg 形状参数枚举
+CLOUDRIG_LIMB_LEG_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('LEG_STRETCH', "Stretch Shape", "Update chain.shape_stretch"),
+    ('LEG_STRETCH_ENDS', "Stretch Ends", "Update chain.shape_stretch_ends"),
+    ('LEG_FK', "FK Shape", "Update fk_chain.shape_fk"),
+    ('LEG_FK_ROOT', "FK Root Shape", "Update fk_chain.shape_fk_root"),
+    ('LEG_IK_MASTER', "IK Master", "Update ik_chain.shape_ik_master"),
+    ('LEG_IK_FIRST', "First IK", "Update ik_chain.shape_ik_first"),
+    ('LEG_IK_POLE', "IK Pole", "Update ik_chain.shape_ik_pole"),
+    ('LEG_FOOT_ROLL', "Foot Roll", "Update leg.shape_footroll"),
+]
+
+# 组件类型枚举
+CLOUDRIG_COMPONENT_TYPE_ITEMS = [
+    ('NONE', "None", "No CloudRig component"),
+    ('SPINE_TOON', "Spine: Cartoon", "Spine Cartoon component"),
+    ('LIMB_LEG', "Limb: Biped Leg", "Limb Biped Leg component"),
+]
+
+
 class BW_Settings(PropertyGroup):
     live_update_on: BoolProperty(
         name="Live Update On",
@@ -66,6 +97,30 @@ class BW_Settings(PropertyGroup):
         description="Select a Bone Color",
         items=bone_color_items_short,  # get the themes minus the blank ones
         default=1,  # THEME01
+    )
+
+    # CloudRig 组件类型（自动检测）
+    cloudrig_component_type: EnumProperty(
+        name="Component",
+        description="Detected CloudRig component type",
+        items=CLOUDRIG_COMPONENT_TYPE_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Spine: Cartoon 集成
+    cloudrig_spine_toon_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Spine: Cartoon shape parameter to update",
+        items=CLOUDRIG_SPINE_TOON_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Limb: Biped Leg 集成
+    cloudrig_limb_leg_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Limb: Biped Leg shape parameter to update",
+        items=CLOUDRIG_LIMB_LEG_ITEMS,
+        default='NONE',
     )
 
     # Nested Property Groups

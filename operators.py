@@ -1,9 +1,11 @@
 import bpy
 import os
+from mathutils import Euler
 
 from .functions.main_functions import (
     find_match_bones,
     from_widget_find_bone,
+    find_bone_from_cloudrig_widget,
     symmetrize_widget_helper,
     match_bone_matrix,
     create_widget,
@@ -20,6 +22,12 @@ from .functions.main_functions import (
     set_bone_color,
     copy_bone_color,
     get_preferences,
+    update_cloudrig_widget,
+    update_cloudrig_spine_toon,
+    is_cloudrig_spine_toon,
+    is_cloudrig_component,
+    get_cloudrig_component_type,
+    get_cloudrig_widget,
 )
 from .functions.json_functions import (
     add_remove_widgets,
@@ -169,9 +177,43 @@ class BONEWIDGET_OT_create_widget(bpy.types.Operator):
         global_size = self.global_size_advanced if self.advanced_options else (
             self.global_size_simple,) * 3
         use_face_data = self.use_face_data if self.advanced_options else False
+        
+        bw_settings = context.scene.bw_settings
+        
         for bone in bpy.context.selected_pose_bones:
+            # 检测 CloudRig 组件类型
+            component_type = get_cloudrig_component_type(bone)
+            
+            if component_type == 'Spine: Cartoon':
+                cloudrig_param = bw_settings.cloudrig_spine_toon_param
+                if cloudrig_param != 'NONE':
+                    widget_obj = create_widget(
+                        bone, widget_data, self.relative_size, global_size, slide, self.rotation,
+                        get_collection(context), use_face_data, self.wireframe_width, 
+                        cloudrig_param=cloudrig_param
+                    )
+                    if widget_obj:
+                        update_cloudrig_widget(bone, cloudrig_param, widget_obj, component_type)
+                        self.report({'INFO'}, f"Updated {component_type} {cloudrig_param}")
+                    continue
+            
+            elif component_type == 'Limb: Biped Leg':
+                cloudrig_param = bw_settings.cloudrig_limb_leg_param
+                if cloudrig_param != 'NONE':
+                    widget_obj = create_widget(
+                        bone, widget_data, self.relative_size, global_size, slide, self.rotation,
+                        get_collection(context), use_face_data, self.wireframe_width, 
+                        cloudrig_param=cloudrig_param
+                    )
+                    if widget_obj:
+                        update_cloudrig_widget(bone, cloudrig_param, widget_obj, component_type)
+                        self.report({'INFO'}, f"Updated {component_type} {cloudrig_param}")
+                    continue
+            
+            # 标准 Bone Widget 行为
             create_widget(bone, widget_data, self.relative_size, global_size, slide, self.rotation,
                           get_collection(context), use_face_data, self.wireframe_width)
+        
         return {'FINISHED'}
 
 
@@ -183,15 +225,92 @@ class BONEWIDGET_OT_edit_widget(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return (context.object and context.object.type == 'ARMATURE' and context.object.mode == 'POSE'
-                and context.active_pose_bone is not None and context.active_pose_bone.custom_shape is not None)
+        if not (context.object and context.object.type == 'ARMATURE' and context.object.mode == 'POSE'
+                and context.active_pose_bone is not None):
+            return False
+        
+        # 标准模式：检查骨骼是否有 custom_shape
+        if context.active_pose_bone.custom_shape is not None:
+            return True
+        
+        # CloudRig 模式：检查是否支持任何 CloudRig 组件
+        bone = context.active_pose_bone
+        component_type = get_cloudrig_component_type(bone)
+        
+        if component_type == 'Spine: Cartoon':
+            bw_settings = context.scene.bw_settings
+            param = bw_settings.cloudrig_spine_toon_param
+            return param != 'NONE'
+        
+        elif component_type == 'Limb: Biped Leg':
+            bw_settings = context.scene.bw_settings
+            param = bw_settings.cloudrig_limb_leg_param
+            return param != 'NONE'
+        
+        return False
 
     def execute(self, context):
         active_bone = context.active_pose_bone
+        bw_settings = context.scene.bw_settings
+        
         try:
+            # 检测 CloudRig 组件类型
+            component_type = get_cloudrig_component_type(active_bone)
+            
+            if component_type == 'Spine: Cartoon':
+                param = bw_settings.cloudrig_spine_toon_param
+                if param != 'NONE':
+                    widget = get_cloudrig_widget(active_bone, param, component_type)
+                    if widget:
+                        edit_widget(active_bone, widget)
+                        self.report({'INFO'}, f"Editing Spine: Cartoon {param}")
+                        return {'FINISHED'}
+                    else:
+                        # 自动创建
+                        widget_data = get_widget_data(context.window_manager.widget_list)
+                        collection = get_collection(context)
+                        new_widget = create_widget(
+                            active_bone, widget_data, 
+                            relative=True, size=(1.0, 1.0, 1.0), 
+                            slide=(0.0, 0.0, 0.0), rotation=Euler((0.0, 0.0, 0.0)),
+                            collection=collection, use_face_data=False, 
+                            wireframe_width=2.0, cloudrig_param=param
+                        )
+                        if new_widget:
+                            update_cloudrig_widget(active_bone, param, new_widget, component_type)
+                            edit_widget(active_bone, new_widget)
+                            self.report({'INFO'}, f"Created and editing Spine: Cartoon {param}")
+                            return {'FINISHED'}
+            
+            elif component_type == 'Limb: Biped Leg':
+                param = bw_settings.cloudrig_limb_leg_param
+                if param != 'NONE':
+                    widget = get_cloudrig_widget(active_bone, param, component_type)
+                    if widget:
+                        edit_widget(active_bone, widget)
+                        self.report({'INFO'}, f"Editing Limb: Leg {param}")
+                        return {'FINISHED'}
+                    else:
+                        # 自动创建
+                        widget_data = get_widget_data(context.window_manager.widget_list)
+                        collection = get_collection(context)
+                        new_widget = create_widget(
+                            active_bone, widget_data, 
+                            relative=True, size=(1.0, 1.0, 1.0), 
+                            slide=(0.0, 0.0, 0.0), rotation=Euler((0.0, 0.0, 0.0)),
+                            collection=collection, use_face_data=False, 
+                            wireframe_width=2.0, cloudrig_param=param
+                        )
+                        if new_widget:
+                            update_cloudrig_widget(active_bone, param, new_widget, component_type)
+                            edit_widget(active_bone, new_widget)
+                            self.report({'INFO'}, f"Created and editing Limb: Leg {param}")
+                            return {'FINISHED'}
+            
+            # 标准 Bone Widget 行为
             edit_widget(active_bone)
-        except KeyError:
-            self.report({'INFO'}, 'This widget is the Widget Collection')
+        except KeyError as e:
+            self.report({'INFO'}, str(e))
         return {'FINISHED'}
 
 
@@ -208,8 +327,18 @@ class BONEWIDGET_OT_return_to_armature(bpy.types.Operator):
 
     def execute(self, context):
         b = bpy.context.object
-        if from_widget_find_bone(bpy.context.object):
-            return_to_armature(bpy.context.object)
+        
+        # 先尝试标准查找
+        bone = from_widget_find_bone(b)
+        
+        # 如果没找到，尝试 CloudRig 查找
+        if bone is None:
+            bone = find_bone_from_cloudrig_widget(b)
+        
+        if bone:
+            success = return_to_armature(b, bone)
+            if not success:
+                self.report({'WARNING'}, 'Failed to return to armature')
         else:
             self.report({'INFO'}, 'Object is not a bone widget')
         return {'FINISHED'}

@@ -4,6 +4,8 @@ from .props import PresetColorSetItem
 from .functions.main_functions import (
     recursive_layer_collection,
     get_preferences,
+    is_cloudrig_spine_toon,
+    get_cloudrig_component_type,
 )
 from .functions.preview_functions import (
     create_preview_collection,
@@ -63,6 +65,23 @@ class BONEWIDGET_PT_bw_panel_main(BONEWIDGET_PT_bw_panel, bpy.types.Panel):
         else:
             row.operator("bonewidget.return_to_armature",
                          icon="LOOP_BACK", text='To bone')
+
+        # CloudRig 组件集成
+        if context.mode == "POSE" and context.active_pose_bone:
+            bone = context.active_pose_bone
+            component_type = get_cloudrig_component_type(bone)
+            
+            if component_type == 'Spine: Cartoon':
+                box = layout.box()
+                box.label(text="Spine: Cartoon:", icon='ARMATURE_DATA')
+                row = box.row()
+                row.prop(context.scene.bw_settings, "cloudrig_spine_toon_param", text="")
+            
+            elif component_type == 'Limb: Biped Leg':
+                box = layout.box()
+                box.label(text="Limb: Biped Leg:", icon='ARMATURE_DATA')
+                row = box.row()
+                row.prop(context.scene.bw_settings, "cloudrig_limb_leg_param", text="")
 
         layout.separator()
 
