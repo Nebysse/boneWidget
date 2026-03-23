@@ -62,6 +62,25 @@ from .classes import ColorSet
 from bpy.props import FloatProperty, BoolProperty, FloatVectorProperty, IntVectorProperty, StringProperty, EnumProperty
 
 
+def _mark_cloudrig_dirty(bone):
+    """标记 CloudRig 组件为脏以刷新 GPU 预览"""
+    if not hasattr(bone, 'cloudrig_component'):
+        return
+    
+    component = bone.cloudrig_component
+    if not component:
+        return
+    
+    # 标记组件为脏
+    if hasattr(component, 'overlay_is_dirty'):
+        component.overlay_is_dirty = True
+    
+    # 标记 inherited_component
+    if hasattr(component, 'inherited_component') and component.inherited_component:
+        if hasattr(component.inherited_component, 'overlay_is_dirty'):
+            component.inherited_component.overlay_is_dirty = True
+
+
 class BONEWIDGET_OT_shared_property_group(bpy.types.PropertyGroup):
     """Storage class for Shared Attribute Properties"""
 
@@ -296,6 +315,8 @@ class BONEWIDGET_OT_edit_widget(bpy.types.Operator):
                     widget = get_cloudrig_widget(active_bone, param, component_type)
                     if widget:
                         edit_widget(active_bone, widget)
+                        # 标记 CloudRig 组件为脏以刷新 GPU 预览
+                        _mark_cloudrig_dirty(active_bone)
                         self.report({'INFO'}, f"Editing {component_type} {param}")
                         return {'FINISHED'}
                     else:
