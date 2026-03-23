@@ -180,25 +180,27 @@ class BONEWIDGET_OT_create_widget(bpy.types.Operator):
         
         bw_settings = context.scene.bw_settings
         
+        # 组件类型到参数属性的映射
+        component_param_map = {
+            'Spine: Cartoon': 'cloudrig_spine_toon_param',
+            'Spine: IK/FK': 'cloudrig_spine_ikfk_param',
+            'Limb: Biped Leg': 'cloudrig_limb_leg_param',
+            'Chain: FK': 'cloudrig_chain_fk_param',
+            'Chain: IK': 'cloudrig_chain_ik_param',
+            'Chain: Toon': 'cloudrig_chain_toon_param',
+            'Aim': 'cloudrig_aim_param',
+            'Single Control': 'cloudrig_single_control_param',
+            'Lattice': 'cloudrig_lattice_param',
+            'Curve: With Hooks': 'cloudrig_curve_hooks_param',
+        }
+        
         for bone in bpy.context.selected_pose_bones:
             # 检测 CloudRig 组件类型
             component_type = get_cloudrig_component_type(bone)
             
-            if component_type == 'Spine: Cartoon':
-                cloudrig_param = bw_settings.cloudrig_spine_toon_param
-                if cloudrig_param != 'NONE':
-                    widget_obj = create_widget(
-                        bone, widget_data, self.relative_size, global_size, slide, self.rotation,
-                        get_collection(context), use_face_data, self.wireframe_width, 
-                        cloudrig_param=cloudrig_param
-                    )
-                    if widget_obj:
-                        update_cloudrig_widget(bone, cloudrig_param, widget_obj, component_type)
-                        self.report({'INFO'}, f"Updated {component_type} {cloudrig_param}")
-                    continue
-            
-            elif component_type == 'Limb: Biped Leg':
-                cloudrig_param = bw_settings.cloudrig_limb_leg_param
+            if component_type and component_type in component_param_map:
+                param_attr = component_param_map[component_type]
+                cloudrig_param = getattr(bw_settings, param_attr)
                 if cloudrig_param != 'NONE':
                     widget_obj = create_widget(
                         bone, widget_data, self.relative_size, global_size, slide, self.rotation,
@@ -237,15 +239,24 @@ class BONEWIDGET_OT_edit_widget(bpy.types.Operator):
         bone = context.active_pose_bone
         component_type = get_cloudrig_component_type(bone)
         
-        if component_type == 'Spine: Cartoon':
-            bw_settings = context.scene.bw_settings
-            param = bw_settings.cloudrig_spine_toon_param
-            return param != 'NONE'
-        
-        elif component_type == 'Limb: Biped Leg':
-            bw_settings = context.scene.bw_settings
-            param = bw_settings.cloudrig_limb_leg_param
-            return param != 'NONE'
+        if component_type:
+            # 组件类型到参数属性的映射
+            component_param_map = {
+                'Spine: Cartoon': 'cloudrig_spine_toon_param',
+                'Spine: IK/FK': 'cloudrig_spine_ikfk_param',
+                'Limb: Biped Leg': 'cloudrig_limb_leg_param',
+                'Chain: FK': 'cloudrig_chain_fk_param',
+                'Chain: IK': 'cloudrig_chain_ik_param',
+                'Chain: Toon': 'cloudrig_chain_toon_param',
+                'Aim': 'cloudrig_aim_param',
+                'Single Control': 'cloudrig_single_control_param',
+                'Lattice': 'cloudrig_lattice_param',
+                'Curve: With Hooks': 'cloudrig_curve_hooks_param',
+            }
+            if component_type in component_param_map:
+                bw_settings = context.scene.bw_settings
+                param_attr = component_param_map[component_type]
+                return getattr(bw_settings, param_attr) != 'NONE'
         
         return False
 
@@ -253,17 +264,32 @@ class BONEWIDGET_OT_edit_widget(bpy.types.Operator):
         active_bone = context.active_pose_bone
         bw_settings = context.scene.bw_settings
         
+        # 组件类型到参数属性的映射
+        component_param_map = {
+            'Spine: Cartoon': 'cloudrig_spine_toon_param',
+            'Spine: IK/FK': 'cloudrig_spine_ikfk_param',
+            'Limb: Biped Leg': 'cloudrig_limb_leg_param',
+            'Chain: FK': 'cloudrig_chain_fk_param',
+            'Chain: IK': 'cloudrig_chain_ik_param',
+            'Chain: Toon': 'cloudrig_chain_toon_param',
+            'Aim': 'cloudrig_aim_param',
+            'Single Control': 'cloudrig_single_control_param',
+            'Lattice': 'cloudrig_lattice_param',
+            'Curve: With Hooks': 'cloudrig_curve_hooks_param',
+        }
+        
         try:
             # 检测 CloudRig 组件类型
             component_type = get_cloudrig_component_type(active_bone)
             
-            if component_type == 'Spine: Cartoon':
-                param = bw_settings.cloudrig_spine_toon_param
+            if component_type and component_type in component_param_map:
+                param_attr = component_param_map[component_type]
+                param = getattr(bw_settings, param_attr)
                 if param != 'NONE':
                     widget = get_cloudrig_widget(active_bone, param, component_type)
                     if widget:
                         edit_widget(active_bone, widget)
-                        self.report({'INFO'}, f"Editing Spine: Cartoon {param}")
+                        self.report({'INFO'}, f"Editing {component_type} {param}")
                         return {'FINISHED'}
                     else:
                         # 自动创建
@@ -279,32 +305,7 @@ class BONEWIDGET_OT_edit_widget(bpy.types.Operator):
                         if new_widget:
                             update_cloudrig_widget(active_bone, param, new_widget, component_type)
                             edit_widget(active_bone, new_widget)
-                            self.report({'INFO'}, f"Created and editing Spine: Cartoon {param}")
-                            return {'FINISHED'}
-            
-            elif component_type == 'Limb: Biped Leg':
-                param = bw_settings.cloudrig_limb_leg_param
-                if param != 'NONE':
-                    widget = get_cloudrig_widget(active_bone, param, component_type)
-                    if widget:
-                        edit_widget(active_bone, widget)
-                        self.report({'INFO'}, f"Editing Limb: Leg {param}")
-                        return {'FINISHED'}
-                    else:
-                        # 自动创建
-                        widget_data = get_widget_data(context.window_manager.widget_list)
-                        collection = get_collection(context)
-                        new_widget = create_widget(
-                            active_bone, widget_data, 
-                            relative=True, size=(1.0, 1.0, 1.0), 
-                            slide=(0.0, 0.0, 0.0), rotation=Euler((0.0, 0.0, 0.0)),
-                            collection=collection, use_face_data=False, 
-                            wireframe_width=2.0, cloudrig_param=param
-                        )
-                        if new_widget:
-                            update_cloudrig_widget(active_bone, param, new_widget, component_type)
-                            edit_widget(active_bone, new_widget)
-                            self.report({'INFO'}, f"Created and editing Limb: Leg {param}")
+                            self.report({'INFO'}, f"Created and editing {component_type} {param}")
                             return {'FINISHED'}
             
             # 标准 Bone Widget 行为

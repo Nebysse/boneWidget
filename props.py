@@ -62,15 +62,76 @@ CLOUDRIG_LIMB_LEG_ITEMS = [
     ('LEG_FK_ROOT', "FK Root Shape", "Update fk_chain.shape_fk_root"),
     ('LEG_IK_MASTER', "IK Master", "Update ik_chain.shape_ik_master"),
     ('LEG_IK_FIRST', "First IK", "Update ik_chain.shape_ik_first"),
-    ('LEG_IK_POLE', "IK Pole", "Update ik_chain.shape_ik_pole"),
+    ('LEG_IK_POLE', "IK Pole", "Update ik_chain.shape_pole"),
     ('LEG_FOOT_ROLL', "Foot Roll", "Update leg.shape_footroll"),
 ]
 
-# 组件类型枚举
-CLOUDRIG_COMPONENT_TYPE_ITEMS = [
-    ('NONE', "None", "No CloudRig component"),
-    ('SPINE_TOON', "Spine: Cartoon", "Spine Cartoon component"),
-    ('LIMB_LEG', "Limb: Biped Leg", "Limb Biped Leg component"),
+# CloudRig Spine: IK/FK 形状参数枚举
+CLOUDRIG_SPINE_IKFK_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('SHAPE_HIP', "Hip", "Update spine.shape_hip"),
+    ('SHAPE_CHEST', "Chest", "Update spine.shape_chest"),
+    ('SHAPE_TORSO', "Torso", "Update spine.shape_torso"),
+    ('SHAPE_IK', "IK Shape", "Update spine.shape_ik"),
+]
+
+# CloudRig Chain: FK 形状参数枚举
+CLOUDRIG_CHAIN_FK_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('FK_SHAPE', "FK Shape", "Update fk_chain.shape_fk"),
+    ('FK_ROOT_SHAPE', "FK Root Shape", "Update fk_chain.shape_fk_root"),
+]
+
+# CloudRig Chain: IK 形状参数枚举
+CLOUDRIG_CHAIN_IK_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('IK_MASTER', "IK Master", "Update ik_chain.shape_ik_master"),
+    ('IK_FIRST', "First IK", "Update ik_chain.shape_ik_first"),
+    ('IK_POLE', "IK Pole", "Update ik_chain.shape_pole"),
+]
+
+# CloudRig Chain: Toon 形状参数枚举
+CLOUDRIG_CHAIN_TOON_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('CHAIN_STRETCH', "Stretch Shape", "Update chain.shape_stretch"),
+    ('CHAIN_STRETCH_ENDS', "Stretch Ends", "Update chain.shape_stretch_ends"),
+    ('CHAIN_DEF_CONTROL', "Def Control", "Update chain.shape_def_control"),
+]
+
+# CloudRig Aim 形状参数枚举
+CLOUDRIG_AIM_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('AIM_TARGET', "Target", "Update aim.shape_target"),
+    ('AIM_EYE', "Eye", "Update aim.shape_eye"),
+    ('AIM_ROOT', "Root", "Update aim.shape_root"),
+    ('AIM_HIGHLIGHT', "Highlight", "Update aim.shape_highlight"),
+    ('AIM_MASTER', "Master", "Update aim.shape_master"),
+]
+
+# CloudRig Single Control 形状参数枚举
+CLOUDRIG_SINGLE_CONTROL_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('CONTROL_SHAPE', "Control Shape", "Update copy.shape_control"),
+    ('CONTROL_PIVOT', "Pivot", "Update copy.shape_pivot"),
+]
+
+# CloudRig Lattice 形状参数枚举
+CLOUDRIG_LATTICE_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('LATTICE_ROOT', "Root", "Update lattice.shape_root"),
+    ('LATTICE_SHAPE', "Lattice", "Update lattice.shape_lattice"),
+]
+
+# CloudRig Curve: With Hooks 形状参数枚举
+CLOUDRIG_CURVE_HOOKS_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('CURVE_ROOT', "Root", "Update curve.shape_root"),
+    ('CURVE_POINT', "Point", "Update curve.shape_point"),
+    ('CURVE_HANDLE', "Handle", "Update curve.shape_handle"),
+    ('CURVE_BEZIER_CENTER', "Bezier Center", "Update curve.shape_bezier_center"),
+    ('CURVE_BEZIER', "Bezier", "Update curve.shape_bezier"),
+    ('CURVE_SPLINE_ROOT', "Spline Root", "Update curve.shape_spline_root"),
+    ('CURVE_RADIUS', "Radius", "Update curve.shape_radius"),
 ]
 
 
@@ -120,6 +181,70 @@ class BW_Settings(PropertyGroup):
         name="Shape",
         description="Select CloudRig Limb: Biped Leg shape parameter to update",
         items=CLOUDRIG_LIMB_LEG_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Spine: IK/FK 集成
+    cloudrig_spine_ikfk_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Spine: IK/FK shape parameter to update",
+        items=CLOUDRIG_SPINE_IKFK_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Chain: FK 集成
+    cloudrig_chain_fk_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Chain: FK shape parameter to update",
+        items=CLOUDRIG_CHAIN_FK_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Chain: IK 集成
+    cloudrig_chain_ik_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Chain: IK shape parameter to update",
+        items=CLOUDRIG_CHAIN_IK_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Chain: Toon 集成
+    cloudrig_chain_toon_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Chain: Toon shape parameter to update",
+        items=CLOUDRIG_CHAIN_TOON_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Aim 集成
+    cloudrig_aim_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Aim shape parameter to update",
+        items=CLOUDRIG_AIM_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Single Control 集成
+    cloudrig_single_control_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Single Control shape parameter to update",
+        items=CLOUDRIG_SINGLE_CONTROL_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Lattice 集成
+    cloudrig_lattice_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Lattice shape parameter to update",
+        items=CLOUDRIG_LATTICE_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Curve: With Hooks 集成
+    cloudrig_curve_hooks_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Curve: With Hooks shape parameter to update",
+        items=CLOUDRIG_CURVE_HOOKS_ITEMS,
         default='NONE',
     )
 

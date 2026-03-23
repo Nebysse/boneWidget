@@ -70,18 +70,34 @@ class BONEWIDGET_PT_bw_panel_main(BONEWIDGET_PT_bw_panel, bpy.types.Panel):
         if context.mode == "POSE" and context.active_pose_bone:
             bone = context.active_pose_bone
             component_type = get_cloudrig_component_type(bone)
+            bw_settings = context.scene.bw_settings
             
-            if component_type == 'Spine: Cartoon':
+            if component_type:
                 box = layout.box()
-                box.label(text="Spine: Cartoon:", icon='ARMATURE_DATA')
+                box.label(text=f"{component_type}:", icon='ARMATURE_DATA')
                 row = box.row()
-                row.prop(context.scene.bw_settings, "cloudrig_spine_toon_param", text="")
-            
-            elif component_type == 'Limb: Biped Leg':
-                box = layout.box()
-                box.label(text="Limb: Biped Leg:", icon='ARMATURE_DATA')
-                row = box.row()
-                row.prop(context.scene.bw_settings, "cloudrig_limb_leg_param", text="")
+                
+                # 根据组件类型显示对应的枚举
+                if component_type == 'Spine: Cartoon':
+                    row.prop(bw_settings, "cloudrig_spine_toon_param", text="")
+                elif component_type == 'Spine: IK/FK':
+                    row.prop(bw_settings, "cloudrig_spine_ikfk_param", text="")
+                elif component_type == 'Limb: Biped Leg':
+                    row.prop(bw_settings, "cloudrig_limb_leg_param", text="")
+                elif component_type == 'Chain: FK':
+                    row.prop(bw_settings, "cloudrig_chain_fk_param", text="")
+                elif component_type == 'Chain: IK':
+                    row.prop(bw_settings, "cloudrig_chain_ik_param", text="")
+                elif component_type == 'Chain: Toon':
+                    row.prop(bw_settings, "cloudrig_chain_toon_param", text="")
+                elif component_type == 'Aim':
+                    row.prop(bw_settings, "cloudrig_aim_param", text="")
+                elif component_type == 'Single Control':
+                    row.prop(bw_settings, "cloudrig_single_control_param", text="")
+                elif component_type == 'Lattice':
+                    row.prop(bw_settings, "cloudrig_lattice_param", text="")
+                elif component_type == 'Curve: With Hooks':
+                    row.prop(bw_settings, "cloudrig_curve_hooks_param", text="")
 
         layout.separator()
 

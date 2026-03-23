@@ -641,13 +641,135 @@ def get_preferences(context):
 
 
 # ========================================================================
-# CloudRig 支持函数（简化版本 - 仅 Spine: Cartoon）
+# CloudRig 支持函数
 # ========================================================================
+
+def get_cloudrig_param_mappings():
+    """
+    获取所有 CloudRig 组件的参数映射。
+    
+    Returns:
+        dict: 组件类型到参数映射的字典
+    """
+    return {
+        # 脊柱组件
+        'Spine: Cartoon': {
+            'SHAPE_IK': ('spine_toon', 'shape_ik'),
+            'SHAPE_IK_SECONDARY': ('spine_toon', 'shape_ik_secondary'),
+            'SHAPE_TORSO': ('spine_toon', 'shape_torso'),
+            'SHAPE_FK': ('fk_chain', 'shape_fk'),
+            'SHAPE_FK_ROOT': ('fk_chain', 'shape_fk_root'),
+        },
+        'Spine: IK/FK': {
+            'SHAPE_HIP': ('spine', 'shape_hip'),
+            'SHAPE_CHEST': ('spine', 'shape_chest'),
+            'SHAPE_TORSO': ('spine', 'shape_torso'),
+            'SHAPE_IK': ('spine', 'shape_ik'),
+        },
+        'Spine: Squashy': {
+            'SHAPE_FK': ('fk_chain', 'shape_fk'),
+            'SHAPE_FK_ROOT': ('fk_chain', 'shape_fk_root'),
+        },
+        # 肢体组件
+        'Limb: Biped Leg': {
+            'LEG_STRETCH': ('chain', 'shape_stretch'),
+            'LEG_STRETCH_ENDS': ('chain', 'shape_stretch_ends'),
+            'LEG_FK': ('fk_chain', 'shape_fk'),
+            'LEG_FK_ROOT': ('fk_chain', 'shape_fk_root'),
+            'LEG_IK_MASTER': ('ik_chain', 'shape_ik_master'),
+            'LEG_IK_FIRST': ('ik_chain', 'shape_ik_first'),
+            'LEG_IK_POLE': ('ik_chain', 'shape_pole'),
+            'LEG_FOOT_ROLL': ('leg', 'shape_footroll'),
+            'LEG_FOREFOOT': ('leg', 'shape_forefoot'),
+        },
+        'Limb: Generic': {
+            'LIMB_STRETCH': ('chain', 'shape_stretch'),
+            'LIMB_STRETCH_ENDS': ('chain', 'shape_stretch_ends'),
+            'LIMB_FK': ('fk_chain', 'shape_fk'),
+            'LIMB_FK_ROOT': ('fk_chain', 'shape_fk_root'),
+            'LIMB_IK_MASTER': ('ik_chain', 'shape_ik_master'),
+            'LIMB_IK_FIRST': ('ik_chain', 'shape_ik_first'),
+            'LIMB_IK_POLE': ('ik_chain', 'shape_pole'),
+            'LIMB_RUBBERHOSE': ('limb', 'shape_rubberhose'),
+        },
+        # 链式组件
+        'Chain: FK': {
+            'FK_SHAPE': ('fk_chain', 'shape_fk'),
+            'FK_ROOT_SHAPE': ('fk_chain', 'shape_fk_root'),
+        },
+        'Chain: IK': {
+            'IK_MASTER': ('ik_chain', 'shape_ik_master'),
+            'IK_FIRST': ('ik_chain', 'shape_ik_first'),
+            'IK_POLE': ('ik_chain', 'shape_pole'),
+        },
+        'Chain: Toon': {
+            'CHAIN_STRETCH': ('chain', 'shape_stretch'),
+            'CHAIN_STRETCH_ENDS': ('chain', 'shape_stretch_ends'),
+            'CHAIN_DEF_CONTROL': ('chain', 'shape_def_control'),
+        },
+        'Chain: Sphere': {
+            'SPHERE_CONTROL': ('chain_sphere', 'shape_sphere_control'),
+        },
+        'Chain: Finger': {
+            'FINGER_FK': ('fk_chain', 'shape_fk'),
+            'FINGER_FK_ROOT': ('fk_chain', 'shape_fk_root'),
+            'FINGER_IK_MASTER': ('ik_chain', 'shape_ik_master'),
+            'FINGER_IK_FIRST': ('ik_chain', 'shape_ik_first'),
+            'FINGER_IK_POLE': ('ik_chain', 'shape_pole'),
+        },
+        'Chain: Face Grid': {
+            'FACE_INTERSECTION': ('face_chain', 'shape_intersection'),
+        },
+        'Chain: Eyelid': {
+            'EYELID_FK': ('fk_chain', 'shape_fk'),
+            'EYELID_FK_ROOT': ('fk_chain', 'shape_fk_root'),
+        },
+        'Chain: Physics': {
+            'PHYSICS_FK': ('fk_chain', 'shape_fk'),
+            'PHYSICS_FK_ROOT': ('fk_chain', 'shape_fk_root'),
+        },
+        # 其他组件
+        'Aim': {
+            'AIM_TARGET': ('aim', 'shape_target'),
+            'AIM_EYE': ('aim', 'shape_eye'),
+            'AIM_ROOT': ('aim', 'shape_root'),
+            'AIM_HIGHLIGHT': ('aim', 'shape_highlight'),
+            'AIM_MASTER': ('aim', 'shape_master'),
+        },
+        'Single Control': {
+            'CONTROL_SHAPE': ('copy', 'shape_control'),
+            'CONTROL_PIVOT': ('copy', 'shape_pivot'),
+        },
+        'Shoulder Bone': {
+            'SHOULDER_SHAPE': ('shoulder', 'shape_shoulder'),
+        },
+        'Feather': {
+            'FEATHER_SHAPE': ('feather', 'shape_feather'),
+        },
+        'Lattice': {
+            'LATTICE_ROOT': ('lattice', 'shape_root'),
+            'LATTICE_SHAPE': ('lattice', 'shape_lattice'),
+        },
+        # 曲线组件
+        'Curve: With Hooks': {
+            'CURVE_ROOT': ('curve', 'shape_root'),
+            'CURVE_POINT': ('curve', 'shape_point'),
+            'CURVE_HANDLE': ('curve', 'shape_handle'),
+            'CURVE_BEZIER_CENTER': ('curve', 'shape_bezier_center'),
+            'CURVE_BEZIER': ('curve', 'shape_bezier'),
+            'CURVE_SPLINE_ROOT': ('curve', 'shape_spline_root'),
+            'CURVE_RADIUS': ('curve', 'shape_radius'),
+        },
+        'Curve: Spline IK': {
+            'SPLINE_FK': ('spline_ik', 'shape_fk'),
+        },
+    }
+
 
 def update_cloudrig_widget(bone, param_value, widget_obj, component_type=None):
     """
     更新 CloudRig 组件的形状参数引用。
-    支持 Spine: Cartoon 和 Limb: Biped Leg 组件。
+    支持所有 CloudRig 组件。
     
     Args:
         bone: PoseBone
@@ -674,26 +796,8 @@ def update_cloudrig_widget(bone, param_value, widget_obj, component_type=None):
     
     params = component.params
     
-    # 根据组件类型选择参数映射（使用原始字符串作为 key）
-    param_mappings = {
-        'Spine: Cartoon': {
-            'SHAPE_IK': ('spine_toon', 'shape_ik'),
-            'SHAPE_IK_SECONDARY': ('spine_toon', 'shape_ik_secondary'),
-            'SHAPE_TORSO': ('spine_toon', 'shape_torso'),
-            'SHAPE_FK': ('fk_chain', 'shape_fk'),
-            'SHAPE_FK_ROOT': ('fk_chain', 'shape_fk_root'),
-        },
-        'Limb: Biped Leg': {
-            'LEG_STRETCH': ('chain', 'shape_stretch'),
-            'LEG_STRETCH_ENDS': ('chain', 'shape_stretch_ends'),
-            'LEG_FK': ('fk_chain', 'shape_fk'),
-            'LEG_FK_ROOT': ('fk_chain', 'shape_fk_root'),
-            'LEG_IK_MASTER': ('ik_chain', 'shape_ik_master'),
-            'LEG_IK_FIRST': ('ik_chain', 'shape_ik_first'),
-            'LEG_IK_POLE': ('ik_chain', 'shape_pole'),
-            'LEG_FOOT_ROLL': ('leg', 'shape_footroll'),
-        },
-    }
+    # 获取参数映射
+    param_mappings = get_cloudrig_param_mappings()
     
     if component_type not in param_mappings:
         return False
@@ -787,26 +891,8 @@ def get_cloudrig_widget(bone, param_value, component_type=None):
     
     params = component.params
     
-    # 根据组件类型选择参数映射（使用原始字符串作为 key）
-    param_mappings = {
-        'Spine: Cartoon': {
-            'SHAPE_IK': ('spine_toon', 'shape_ik'),
-            'SHAPE_IK_SECONDARY': ('spine_toon', 'shape_ik_secondary'),
-            'SHAPE_TORSO': ('spine_toon', 'shape_torso'),
-            'SHAPE_FK': ('fk_chain', 'shape_fk'),
-            'SHAPE_FK_ROOT': ('fk_chain', 'shape_fk_root'),
-        },
-        'Limb: Biped Leg': {
-            'LEG_STRETCH': ('leg', 'stretch_shape'),
-            'LEG_STRETCH_ENDS': ('leg', 'stretch_ends_shape'),
-            'LEG_FK': ('leg', 'fk_shape'),
-            'LEG_FK_ROOT': ('leg', 'fk_root_shape'),
-            'LEG_IK_MASTER': ('leg', 'ik_master_shape'),
-            'LEG_IK_FIRST': ('leg', 'first_ik_shape'),
-            'LEG_IK_POLE': ('leg', 'ik_pole_shape'),
-            'LEG_FOOT_ROLL': ('leg', 'foot_roll_shape'),
-        },
-    }
+    # 获取参数映射
+    param_mappings = get_cloudrig_param_mappings()
     
     if component_type not in param_mappings:
         return None
@@ -837,14 +923,14 @@ def get_cloudrig_widget(bone, param_value, component_type=None):
 # 保留旧函数名以保持兼容性
 def get_cloudrig_spine_toon_widget(bone, param_value):
     """旧函数名，保留兼容性"""
-    return get_cloudrig_widget(bone, param_value, 'SPINE_TOON')
+    return get_cloudrig_widget(bone, param_value, 'Spine: Cartoon')
 
 
 def find_bone_from_cloudrig_widget(widget):
     """
     通过 CloudRig 控件查找对应的骨骼。
     检查所有骨骼的 CloudRig 组件参数中是否引用了该控件。
-    支持 Spine: Cartoon 和 Limb: Biped Leg 组件。
+    支持所有 CloudRig 组件。
     
     Args:
         widget: 控件对象
@@ -855,24 +941,14 @@ def find_bone_from_cloudrig_widget(widget):
     if widget is None:
         return None
     
-    # 所有支持的参数路径
-    all_param_paths = [
-        # Spine: Cartoon
-        ('spine_toon', 'shape_ik'),
-        ('spine_toon', 'shape_ik_secondary'),
-        ('spine_toon', 'shape_torso'),
-        ('fk_chain', 'shape_fk'),
-        ('fk_chain', 'shape_fk_root'),
-        # Limb: Biped Leg
-        ('chain', 'shape_stretch'),
-        ('chain', 'shape_stretch_ends'),
-        ('fk_chain', 'shape_fk'),
-        ('fk_chain', 'shape_fk_root'),
-        ('ik_chain', 'shape_ik_master'),
-        ('ik_chain', 'shape_ik_first'),
-        ('ik_chain', 'shape_pole'),
-        ('leg', 'shape_footroll'),
-    ]
+    # 所有支持的参数路径（从参数映射中提取）
+    param_mappings = get_cloudrig_param_mappings()
+    all_param_paths = set()
+    for mapping in param_mappings.values():
+        for namespace, param_name in mapping.values():
+            all_param_paths.add((namespace, param_name))
+    
+    all_param_paths = list(all_param_paths)
     
     for ob in bpy.context.scene.objects:
         if ob.type == "ARMATURE":
