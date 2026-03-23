@@ -869,6 +869,11 @@ def update_cloudrig_widget(bone, param_value, widget_obj, component_type=None):
             shape_param.use_pointer = True
         if hasattr(shape_param, 'custom_shape'):
             shape_param.custom_shape = widget_obj
+            
+            # 刷新 CloudRig GPU 预览
+            if hasattr(component, 'overlay_is_dirty'):
+                component.overlay_is_dirty = True
+            
             return True
     except Exception as e:
         print(f"Bone Widget: Failed to update CloudRig: {e}")
