@@ -96,6 +96,10 @@ class BONEWIDGET_PT_bw_panel_main(BONEWIDGET_PT_bw_panel, bpy.types.Panel):
                     row.prop(bw_settings, "cloudrig_single_control_param", text="")
                 elif component_type == 'Lattice':
                     row.prop(bw_settings, "cloudrig_lattice_param", text="")
+                elif component_type == 'Limb: Generic':
+                    row.prop(bw_settings, "cloudrig_limb_generic_param", text="")
+                elif component_type == 'Shoulder Bone':
+                    row.prop(bw_settings, "cloudrig_shoulder_param", text="")
                 elif component_type == 'Curve: With Hooks':
                     row.prop(bw_settings, "cloudrig_curve_hooks_param", text="")
 

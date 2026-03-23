@@ -122,6 +122,25 @@ CLOUDRIG_LATTICE_ITEMS = [
     ('LATTICE_SHAPE', "Lattice", "Update lattice.shape_lattice"),
 ]
 
+# CloudRig Limb: Generic 形状参数枚举
+CLOUDRIG_LIMB_GENERIC_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('LIMB_STRETCH', "Stretch Shape", "Update chain.shape_stretch"),
+    ('LIMB_STRETCH_ENDS', "Stretch Ends", "Update chain.shape_stretch_ends"),
+    ('LIMB_FK', "FK Shape", "Update fk_chain.shape_fk"),
+    ('LIMB_FK_ROOT', "FK Root Shape", "Update fk_chain.shape_fk_root"),
+    ('LIMB_IK_MASTER', "IK Master", "Update ik_chain.shape_ik_master"),
+    ('LIMB_IK_FIRST', "First IK", "Update ik_chain.shape_ik_first"),
+    ('LIMB_IK_POLE', "IK Pole", "Update ik_chain.shape_pole"),
+    ('LIMB_RUBBERHOSE', "Rubberhose", "Update limb.shape_rubberhose"),
+]
+
+# CloudRig Shoulder Bone 形状参数枚举
+CLOUDRIG_SHOULDER_ITEMS = [
+    ('NONE', "None", "Standard Bone Widget behavior"),
+    ('SHOULDER_SHAPE', "Shoulder", "Update shoulder.shape_shoulder"),
+]
+
 # CloudRig Curve: With Hooks 形状参数枚举
 CLOUDRIG_CURVE_HOOKS_ITEMS = [
     ('NONE', "None", "Standard Bone Widget behavior"),
@@ -132,6 +151,23 @@ CLOUDRIG_CURVE_HOOKS_ITEMS = [
     ('CURVE_BEZIER', "Bezier", "Update curve.shape_bezier"),
     ('CURVE_SPLINE_ROOT', "Spline Root", "Update curve.shape_spline_root"),
     ('CURVE_RADIUS', "Radius", "Update curve.shape_radius"),
+]
+
+# CloudRig 组件类型枚举（用于显示）
+CLOUDRIG_COMPONENT_TYPE_ITEMS = [
+    ('NONE', "None", "No CloudRig component"),
+    ('Spine: Cartoon', "Spine: Cartoon", "Spine Cartoon component"),
+    ('Spine: IK/FK', "Spine: IK/FK", "Spine IK/FK component"),
+    ('Limb: Biped Leg', "Limb: Biped Leg", "Limb Biped Leg component"),
+    ('Limb: Generic', "Limb: Generic", "Limb Generic component"),
+    ('Chain: FK', "Chain: FK", "Chain FK component"),
+    ('Chain: IK', "Chain: IK", "Chain IK component"),
+    ('Chain: Toon', "Chain: Toon", "Chain Toon component"),
+    ('Aim', "Aim", "Aim component"),
+    ('Single Control', "Single Control", "Single Control component"),
+    ('Shoulder Bone', "Shoulder Bone", "Shoulder Bone component"),
+    ('Lattice', "Lattice", "Lattice component"),
+    ('Curve: With Hooks', "Curve: With Hooks", "Curve With Hooks component"),
 ]
 
 
@@ -237,6 +273,22 @@ class BW_Settings(PropertyGroup):
         name="Shape",
         description="Select CloudRig Lattice shape parameter to update",
         items=CLOUDRIG_LATTICE_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Limb: Generic 集成
+    cloudrig_limb_generic_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Limb: Generic shape parameter to update",
+        items=CLOUDRIG_LIMB_GENERIC_ITEMS,
+        default='NONE',
+    )
+
+    # CloudRig Shoulder Bone 集成
+    cloudrig_shoulder_param: EnumProperty(
+        name="Shape",
+        description="Select CloudRig Shoulder Bone shape parameter to update",
+        items=CLOUDRIG_SHOULDER_ITEMS,
         default='NONE',
     )
 

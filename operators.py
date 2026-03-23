@@ -191,6 +191,8 @@ class BONEWIDGET_OT_create_widget(bpy.types.Operator):
             'Aim': 'cloudrig_aim_param',
             'Single Control': 'cloudrig_single_control_param',
             'Lattice': 'cloudrig_lattice_param',
+            'Limb: Generic': 'cloudrig_limb_generic_param',
+            'Shoulder Bone': 'cloudrig_shoulder_param',
             'Curve: With Hooks': 'cloudrig_curve_hooks_param',
         }
         
@@ -251,6 +253,8 @@ class BONEWIDGET_OT_edit_widget(bpy.types.Operator):
                 'Aim': 'cloudrig_aim_param',
                 'Single Control': 'cloudrig_single_control_param',
                 'Lattice': 'cloudrig_lattice_param',
+                'Limb: Generic': 'cloudrig_limb_generic_param',
+                'Shoulder Bone': 'cloudrig_shoulder_param',
                 'Curve: With Hooks': 'cloudrig_curve_hooks_param',
             }
             if component_type in component_param_map:
@@ -275,6 +279,8 @@ class BONEWIDGET_OT_edit_widget(bpy.types.Operator):
             'Aim': 'cloudrig_aim_param',
             'Single Control': 'cloudrig_single_control_param',
             'Lattice': 'cloudrig_lattice_param',
+            'Limb: Generic': 'cloudrig_limb_generic_param',
+            'Shoulder Bone': 'cloudrig_shoulder_param',
             'Curve: With Hooks': 'cloudrig_curve_hooks_param',
         }
         
