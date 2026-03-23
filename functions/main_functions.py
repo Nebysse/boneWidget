@@ -871,8 +871,18 @@ def update_cloudrig_widget(bone, param_value, widget_obj, component_type=None):
             shape_param.custom_shape = widget_obj
             
             # 刷新 CloudRig GPU 预览
+            # 通过 rna_ancestors 找到并标记所有相关组件为脏
+            if hasattr(shape_param, 'rna_ancestors'):
+                for ancestor in shape_param.rna_ancestors():
+                    if hasattr(ancestor, 'overlay_is_dirty'):
+                        ancestor.overlay_is_dirty = True
+            # 同时标记直接组件
             if hasattr(component, 'overlay_is_dirty'):
                 component.overlay_is_dirty = True
+            # 标记 inherited_component（如果存在）
+            if hasattr(component, 'inherited_component') and component.inherited_component:
+                if hasattr(component.inherited_component, 'overlay_is_dirty'):
+                    component.inherited_component.overlay_is_dirty = True
             
             return True
     except Exception as e:
