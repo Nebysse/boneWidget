@@ -32,6 +32,50 @@ def get_collection(context):
         return collection
 
 
+def get_cloudrig_widget_collection(context):
+    """
+    获取 CloudRig 的 widget collection。
+    如果当前选中的骨骼属于 CloudRig，则返回 CloudRig 的 widget collection。
+    
+    Args:
+        context: Blender 上下文
+    
+    Returns:
+        Collection: CloudRig 的 widget collection，如果没有则返回 None
+    """
+    active_obj = context.active_object
+    if not active_obj or active_obj.type != 'ARMATURE':
+        return None
+    
+    # 检查是否是 CloudRig 骨骼
+    if hasattr(active_obj, 'cloudrig') and active_obj.cloudrig:
+        generator = active_obj.cloudrig.generator
+        if generator and hasattr(generator, 'widget_collection'):
+            return generator.widget_collection
+    
+    return None
+
+
+def get_widget_collection(context):
+    """
+    获取用于放置 widget 的集合。
+    优先使用 CloudRig 的 widget collection，否则使用默认的 Bone Widget collection。
+    
+    Args:
+        context: Blender 上下文
+    
+    Returns:
+        Collection: 用于放置 widget 的集合
+    """
+    # 首先尝试获取 CloudRig 的 widget collection
+    cloudrig_collection = get_cloudrig_widget_collection(context)
+    if cloudrig_collection:
+        return cloudrig_collection
+    
+    # 否则使用默认的 Bone Widget collection
+    return get_collection(context)
+
+
 def recursive_layer_collection(layer_collection, collection_name):
     found = None
     if (layer_collection.name == collection_name):

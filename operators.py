@@ -12,6 +12,7 @@ from .functions.main_functions import (
     edit_widget,
     return_to_armature,
     get_collection,
+    get_widget_collection,
     get_view_layer_collection,
     recursive_layer_collection,
     delete_unused_widgets,
@@ -206,7 +207,7 @@ class BONEWIDGET_OT_create_widget(bpy.types.Operator):
                 if cloudrig_param != 'NONE':
                     widget_obj = create_widget(
                         bone, widget_data, self.relative_size, global_size, slide, self.rotation,
-                        get_collection(context), use_face_data, self.wireframe_width, 
+                        get_widget_collection(context), use_face_data, self.wireframe_width, 
                         cloudrig_param=cloudrig_param
                     )
                     if widget_obj:
@@ -216,7 +217,7 @@ class BONEWIDGET_OT_create_widget(bpy.types.Operator):
             
             # 标准 Bone Widget 行为
             create_widget(bone, widget_data, self.relative_size, global_size, slide, self.rotation,
-                          get_collection(context), use_face_data, self.wireframe_width)
+                          get_widget_collection(context), use_face_data, self.wireframe_width)
         
         return {'FINISHED'}
 
@@ -300,7 +301,7 @@ class BONEWIDGET_OT_edit_widget(bpy.types.Operator):
                     else:
                         # 自动创建
                         widget_data = get_widget_data(context.window_manager.widget_list)
-                        collection = get_collection(context)
+                        collection = get_widget_collection(context)
                         new_widget = create_widget(
                             active_bone, widget_data, 
                             relative=True, size=(1.0, 1.0, 1.0), 
@@ -1093,7 +1094,7 @@ class BONEWIDGET_OT_add_object_as_widget(bpy.types.Operator):
         return (len(context.selected_objects) == 2 and context.object.mode == 'POSE')
 
     def execute(self, context):
-        add_object_as_widget(context, get_collection(context))
+        add_object_as_widget(context, get_widget_collection(context))
         return {'FINISHED'}
 
 
